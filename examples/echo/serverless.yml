@@ -1,0 +1,44 @@
+# Service name
+service: echo-example
+
+custom:
+  awsProfile: my-aws-account-profile
+  authServiceUrl: https://your-jwt-validation-service/
+  authServiceAudience: audience-value
+
+# Service-wide settings
+provider:
+  name: aws
+  profile: ${self:custom.awsProfile}
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  stackName: ${self:service}-stack
+  runtime: python3.7
+  environment:
+    SOME_VAR: I am a proud environment variable
+    SOME_OTHER_VAR: I'm another very proud environment variable
+
+  # HTTP API configuration
+  httpApi:
+    name: ${self:service}-api
+    payload: '2.0'
+    cors: true
+    authorizers:
+      jwtAuthorizer:
+        identitySource: $request.header.Authorization
+        issuerUrl: ${self:custom.authServiceUrl}
+        audience:
+          - ${self:custom.authServiceAudience}
+
+# exclude everything except functions from deployment package
+package:
+  include:
+    - '*.py'
+    - '*.js'
+    - '*.rb'
+  exclude:
+    - '**'
+
+# AWS Lambda functions
+functions:
+  - ${file(echo/config.yml)}

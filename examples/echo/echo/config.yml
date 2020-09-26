@@ -1,0 +1,11 @@
+echo:
+  name: function-echo
+  description: Simple Python function that echoes request's payload back to the caller.
+  handler: main.handler
+
+  events:
+  - httpApi:
+      method: GET
+      path: /echo
+      authorizer:
+        name: jwtAuthorizer

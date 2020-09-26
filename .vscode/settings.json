@@ -1,0 +1,4 @@
+{
+  // VS Code's Python runtime environment variables
+  "python.envFile": "${workspaceFolder}/.vscode/py.env"
+}
